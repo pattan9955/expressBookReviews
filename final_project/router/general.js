@@ -18,32 +18,59 @@ public_users.post("/register", (req, res) => {
 
 // Get the book list available in the shop
 public_users.get('/', function (req, res) {
-    //Write your code here
-    return res.status(300).json({ message: "Yet to be implemented" });
+    res.status(300).send(JSON.stringify(books, null, 4));
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn', function (req, res) {
-    //Write your code here
-    return res.status(300).json({ message: "Yet to be implemented" });
+    let isbn = req.params.isbn;
+    
+    if (!(isbn in books)) {
+        return res.status(404).send("No such book exists.");
+    }
+
+    const chosenBook = books[isbn];
+    return res.status(200).send(JSON.stringify(chosenBook, null, 4));
 });
 
 // Get book details based on author
 public_users.get('/author/:author', function (req, res) {
-    //Write your code here
-    return res.status(300).json({ message: "Yet to be implemented" });
+    let author = req.params.author;
+    
+    let result = {"booksbyauthor": []};
+    for (const [isbn, book] of Object.entries(books)) {
+        if (book["author"] === author) {
+            result["booksbyauthor"].push({ [isbn]: book });
+        }
+    }
+
+    return res.status(200).send(JSON.stringify(result, null, 4));
 });
 
 // Get all books based on title
 public_users.get('/title/:title', function (req, res) {
-    //Write your code here
-    return res.status(300).json({ message: "Yet to be implemented" });
+    let title = req.params.title;
+    
+    let result = {"booksbytitle": []};
+    for (const [isbn, book] of Object.entries(books)) {
+        if (book["title"] === title) {
+            result["booksbytitle"].push({ [isbn]: book });
+        }
+    }
+
+    return res.status(200).send(JSON.stringify(result, null, 4));
 });
 
 //  Get book review
 public_users.get('/review/:isbn', function (req, res) {
-    //Write your code here
-    return res.status(300).json({ message: "Yet to be implemented" });
+    let isbn = req.params.isbn;
+
+    if (!(isbn in books)) {
+        return res.status(404).send("No such title found.");
+    }
+
+    let reviews = books[isbn]["reviews"];
+    return res.status(200).send(JSON.stringify(reviews, null, 4));
 });
 
 module.exports.general = public_users;
